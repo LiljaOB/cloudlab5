@@ -11,7 +11,7 @@ CORS(app)
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'secret'
 app.config['MYSQL_DB'] = 'student'
-app.config['MYSQL_HOST'] = '20.68.196.188'
+app.config['MYSQL_HOST'] = '20.117.237.116'
 mysql.init_app(app)
 
 def execute_query(query):
@@ -41,20 +41,6 @@ def add():
     except Exception as e:
         return '{"Result": "Error", "Message": "' + str(e) + '"}'
 
-#@app.route("/update", methods=['PUT'])  # Update Student
-#def update():
-#    try:
-#        id = int(request.form.get('id'))
-#        name = request.json.get('name')
-#        email = request.json.get('email')
-#
-#        query = '''UPDATE students SET studentName = '{}', email = '{}' WHERE studentID = {} ;'''.format(name, email, id)
-#        print("Received Update Request. ID:", id, "Name:", name, "Email:", email)
-#        success = execute_query(query)
-#        print(success)
-#        return '{"Result": "Success"}'
-#    except Exception as e:
-#        return '{"Result": "Error", "Message": "' + str(e) + '"}'
 @app.route("/update", methods=['PUT'])
 def update():
     try:
