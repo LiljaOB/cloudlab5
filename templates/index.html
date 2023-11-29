@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Management</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    h1 {
+      color: #0056b3;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h3 {
+      color: #0056b3;
+      border-bottom: 2px solid #0056b3;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    form {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      margin-bottom: 30px;
+    }
+
+    label {
+      margin-bottom: 8px;
+      display: block;
+      font-weight: bold;
+    }
+
+    input[type=text], input[type=email], input[type=number] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #007bff; 
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3; 
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background-color: #ffffff;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+    }
+  </style>
+<head>
+  <title>Student Management</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+  <h1>Student Management</h1>
+
+  <h3>Add Student</h3>
+  <form id="addStudentForm">
+    <label for="addName">Name:</label>
+    <input type="text" id="addName" name="name">
+    <br>
+    <label for="email">Email:</label>
+    <input type="email" id="addEmail" name="email">
+    <br>
+    <button type="button" id="addStudentButton">Add Student</button>
+  </form>
+
+  <h3>Update Student</h3>
+  <form id="updateStudentForm">
+    <label for="studentID">ID:</label>
+    <input type="number" id="id" name="id">
+    <br>
+    <label for="name">Name:</label>
+    <input type="text" id="updateName" name="name">
+    <br>
+    <label for="email">Email:</label>
+    <input type="email" id="updateEmail" name="email">
+    <br>
+    <button type="button" id="updateStudentButton">Update Student</button>
+  </form>
+
+  <h3>Delete Student</h3>
+  <form id="deleteStudentForm">
+    <label for="name">Name:</label>
+    <input type="text" id="deleteName" name="name">
+    <br>
+    <button type="button" id="deleteStudentButton">Delete Student</button>
+  </form>
+
+  <h3>Student List</h3>
+  <h4> Student ID | Student Name | Student Email</h4>
+  <ul id="studentList"></ul>
+
+  <script>
+    $(document).ready(function() {
+      // Get all students
+      $.ajax({
+        url: '/default',
+        method: 'GET',
+        success: function(response) {
+          var students = response.Results;
+          for (var i = 0; i < students.length; i++) {
+            var student = students[i];
+            var li = $('<li>' + student.ID + '   -   ' + student.Name + '   -   ' + student.Email + '</li>');
+            li.attr('data-id', student.ID);
+            $('#studentList').append(li);
+          }
+        }
+      });
+
+      // Add student
+      $('#addStudentButton').on('click', function() {
+        var name = $('#addName').val();
+        var email = $('#addEmail').val();
+
+        $.ajax({
+          url: '/add',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ name: name, email: email }),
+          success: function(response) {
+            if (response.Result === 'Success') {
+              alert('Student added successfully!');
+              window.location.reload();
+            } else {
+              alert('Error adding student: ' + response.Message);
+            }
+          }
+        });
+      });
+
+      // Update student
+      $('#updateStudentButton').on('click', function() {
+        var id = $('#id').val();
+        var name = $('#updateName').val();
+        var email = $('#updateEmail').val();
+
+        $.ajax({
+          url: '/update',
+          method: 'PUT',
+          contentType: 'application/json',
+          data: JSON.stringify({ id: id, name: name, email: email }),
+          success: function(response) {
+            if (response.Result == 'Success') {
+              alert('Student updated successfully!');
+              window.location.reload();
+            } else {
+              alert('Error updating student: ' + response.Message);
+            }
+          }
+        });
+      });
+
+      // Delete student
+      $('#deleteStudentButton').on('click', function() {
+        var name = $('#deleteName').val();
+
+        $.ajax({
+          url: '/delete',
+          method: 'DELETE',
+          contentType: 'application/json',
+          data: JSON.stringify({ name: name }),
+          success: function(response) {
+            if (response.Result === 'Success') {
+              alert('Student deleted successfully!');
+              window.location.reload();
+            } else {
+              alert('Error deleting student: ' + response.Message);
+            }
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
